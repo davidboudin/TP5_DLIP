@@ -20,6 +20,7 @@ if __name__ == '__main__':
     parser.add_argument('--nb_layer', type=int, default=3)
     parser.add_argument('--normalize', type=bool, default=False)
     parser.add_argument('--output_name', type=str, default='alpha.csv')
+    parser.add_argument('--step_size_scheduler', type=int, default=50)
     config = parser.parse_args()
     df = pd.read_csv('data.csv')
 
@@ -30,22 +31,24 @@ if __name__ == '__main__':
     window = config.K
     # Defining a batch size based on the data
     train_loader = DataLoader(Rossler(df=y_train, window=window,pred_window=1, normalise=False),
-                                            batch_size=100,
+                                            batch_size=config.batch_size,
                                             shuffle=True)
 
     test_loader = DataLoader(Rossler(df=y_test, window=window,pred_window=1, normalise=False),
-                                            batch_size=100,
+                                            batch_size=config.batch_size,
                                             shuffle=False)
 
-    model = K_temporal(K=window,hidden_size_1=window,hidden_size_2=window,out_size=1)
+    model = K_temporal(K=window,hidden_size=window,out_size=1, nb_layers=config.nb_layer)
     model = model.float()
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(),lr=0.01)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.1, last_epoch=-1, verbose=False)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=config.step_size_scheduler, gamma=0.1, last_epoch=-1, verbose=False)
 
     epochs = config.epochs
     print(model)
     print('K: ', window)
+    print('Batch size: ', config.batch_size)
+    print('Normalize: ', config.normalize)
     for epoch in range(epochs):
 
         # Running each batch separately

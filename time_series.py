@@ -15,9 +15,9 @@ class Rossler_model:
         self.rosler_nn = LOAD_YOUR_MODEL
         self.initial_condition = np.array(value.init)
 
-    def full_traj(self,initial_condition=self.initial_condition): 
+    def full_traj(self,initial_condition=self.initial_condition):
         # run your model to generate the time series with nb_steps
-        # just the y cordinate is necessary. 
+        # just the y cordinate is necessary.
 
         COMPLETE HERE
 
@@ -31,9 +31,9 @@ class Rossler_model:
     def save_traj(self,y):
         #save the trajectory in traj.npy file
         # y has to be a numpy array: y.shape = (1000000,)
-          
+
         np.save('traj.npy',y)
-            
+    
 if __name__ == '__main__':
 
     ROSSLER = Rossler_model(delta_t)
@@ -41,4 +41,3 @@ if __name__ == '__main__':
     y = ROSSLER.full_traj()
 
     ROSSLER.save_traj(y)
-

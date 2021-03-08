@@ -1,5 +1,5 @@
 import argparse
-from script.interpolate import interp1d
+from scipy.interpolate import interp1d
 import numpy as np
 
 parser = argparse.ArgumentParser()
@@ -33,7 +33,8 @@ class Rossler_model:
         # y has to be a numpy array: y.shape = (1000000,)
 
         np.save('traj.npy',y)
-    
+
+    
 if __name__ == '__main__':
 
     ROSSLER = Rossler_model(delta_t)

@@ -18,6 +18,7 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', type=int, default=250)
     parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--nb_layer', type=int, default=3)
+    parser.add_argument('--normalize', type=bool, default=False)
     parser.add_argument('--output_name', type=str, default='alpha.csv')
     config = parser.parse_args()
     df = pd.read_csv('data.csv')
@@ -81,9 +82,12 @@ if __name__ == '__main__':
             print("Epoch: %s Loss: %f"%(epoch,epoch_loss))
 
     model.eval()
+
     mean = 0 #y_train.mean()
     std = 1 #y_train.std()
-
+    if config.normalize:
+        mean = y_train.mean()
+        std = y_train.std()
 
     #Predictor
     n_preds = 5000

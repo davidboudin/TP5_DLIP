@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from K_temporal_model import K_temporal
 from dataset import Rossler
 import argparse
-
+from tempconv_model import Conv_temporal
 from torch.utils.data import DataLoader
 import torch
 import torch.nn as nn
@@ -38,7 +38,8 @@ if __name__ == '__main__':
                                             batch_size=config.batch_size,
                                             shuffle=False)
 
-    model = K_temporal(K=window,hidden_size=window,out_size=1, nb_layers=config.nb_layer)
+    #model = K_temporal(K=window,hidden_size=window,out_size=1, nb_layers=config.nb_layer)
+    model = Conv_temporal(config.K, 32, out_size = 1, nb_layers=3)
     model = model.float()
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(),lr=0.01)
@@ -59,7 +60,7 @@ if __name__ == '__main__':
             optimizer.zero_grad()
 
             # Make predictions on the current sequence
-            seq = seq.float()
+            seq = seq.float().unsqueeze(1)
             target = target.float()
             y_pred = model(seq)
             # Compute the lossseq.view(-1,1,self.input_size)
@@ -85,7 +86,7 @@ if __name__ == '__main__':
             print("Epoch: %s Loss: %f"%(epoch,epoch_loss))
 
     model.eval()
-
+    torch.save(model, "K_temporal.pth")
     mean = 0 #y_train.mean()
     std = 1 #y_train.std()
     if config.normalize:
@@ -98,8 +99,8 @@ if __name__ == '__main__':
     features = y_test[start:window+start].values
     target = []
     for i in range(n_preds):
-        seq = (features[i:]-mean)/std
-        seq = torch.tensor(seq).float().view(1,-1)
+        #seq = (features[i:]-mean)/std
+        seq = torch.tensor(seq).float().unsqueeze(1)#.view(1,-1)
         y_pred = model(seq)
         y_pred = y_pred.detach().numpy()
         features = np.append(features, y_pred)

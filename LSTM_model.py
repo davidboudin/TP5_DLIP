@@ -3,7 +3,7 @@ import torch.nn as nn
 
 class LSTMmodel(nn.Module):
 
-    def __init__(self,input_size,hidden_size_1,hidden_size_2,out_size):
+    def __init__(self,input_size,hidden_size_1,hidden_size_2, hidden_size_3, out_size):
 
         super().__init__()
 
@@ -11,21 +11,23 @@ class LSTMmodel(nn.Module):
 
         self.hidden_size_2 = hidden_size_2
 
+        self.hidden_size_3 = hidden_size_3
+
         self.input_size = input_size
 
         self.lstm_1 = nn.LSTM(input_size,hidden_size_1,num_layers=1).float()
 
-        self.lstm_2 = nn.LSTM(hidden_size_1,hidden_size_1,num_layers=1).float()
+        self.lstm_2 = nn.LSTM(hidden_size_1,hidden_size_2,num_layers=1).float()
 
-        self.lstm_3 = nn.LSTM(hidden_size_1,hidden_size_2,num_layers=1).float()
+        self.lstm_3 = nn.LSTM(hidden_size_2,hidden_size_3,num_layers=1).float()
 
-        self.linear = nn.Linear(hidden_size_2,out_size)
+        self.linear = nn.Linear(hidden_size_3,out_size)
 
         self.hidden_1 = (torch.zeros(1,1,hidden_size_1), torch.zeros(1,1,hidden_size_1))
 
         self.hidden_2 = (torch.zeros(1,1,hidden_size_2), torch.zeros(1,1,hidden_size_2))
 
-        self.hidden_3 = (torch.zeros(1,1,hidden_size_2), torch.zeros(1,1,hidden_size_2))
+        self.hidden_3 = (torch.zeros(1,1,hidden_size_3), torch.zeros(1,1,hidden_size_3))
 
     def forward(self,seq):
         self.lstm_1 = self.lstm_1.float()

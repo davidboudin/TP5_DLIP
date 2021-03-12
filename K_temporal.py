@@ -14,7 +14,7 @@ import torch.nn as nn
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--K', type=int, default=128)
+    parser.add_argument('--K', type=int, default=100)
     parser.add_argument('--epochs', type=int, default=300)
     parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--nb_layer', type=int, default=3)

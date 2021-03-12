@@ -28,3 +28,27 @@ class Conv_temporal(nn.Module):
         out = self.relu(self.fc2(out))
         out = self.fc3(out)
         return out
+
+class Linear_temporal(nn.Module):
+
+    def __init__(self,K,hidden_size, out_size = 1, nb_layers=3):
+
+        super().__init__()
+
+        self.hidden_size = hidden_size
+        self.nb_layers = nb_layers
+        self.input_size = K
+
+        self.fc1 = nn.Linear(K, hidden_size)
+        self.fc2 = nn.Linear(hidden_size, hidden_size)
+        self.fc3 = nn.Linear(hidden_size, out_size)
+        self.relu = nn.ReLU()
+        self.pool = nn.MaxPool1d(kernel_size=2)
+
+
+    def forward(self,seq):
+        seq = seq.squeeze(1)
+        out = self.relu(self.fc1(seq))
+        out = self.relu(self.fc2(out))
+        out = self.fc3(out)
+        return out

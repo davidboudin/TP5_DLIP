@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from K_temporal_model import K_temporal
 from dataset import Rossler
 import argparse
-from tempconv_model import Conv_temporal
+from tempconv_model import Conv_temporal, Linear_temporal
 from torch.utils.data import DataLoader
 import torch
 import torch.nn as nn
@@ -39,7 +39,7 @@ if __name__ == '__main__':
                                             shuffle=False)
 
     #model = K_temporal(K=window,hidden_size=window,out_size=1, nb_layers=config.nb_layer)
-    model = Conv_temporal(config.K, 100, out_size = 1, nb_layers=3)
+    model = Linear_temporal(config.K, 100, out_size = 1, nb_layers=3)
     model = model.float()
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(),lr=0.01)

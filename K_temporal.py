@@ -15,12 +15,12 @@ import torch.nn as nn
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--K', type=int, default=128)
-    parser.add_argument('--epochs', type=int, default=250)
+    parser.add_argument('--epochs', type=int, default=300)
     parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--nb_layer', type=int, default=3)
     parser.add_argument('--normalize', type=bool, default=False)
     parser.add_argument('--output_name', type=str, default='alpha.csv')
-    parser.add_argument('--step_size_scheduler', type=int, default=50)
+    parser.add_argument('--step_size_scheduler', type=int, default=75)
     config = parser.parse_args()
     df = pd.read_csv('data.csv')
 
@@ -39,7 +39,7 @@ if __name__ == '__main__':
                                             shuffle=False)
 
     #model = K_temporal(K=window,hidden_size=window,out_size=1, nb_layers=config.nb_layer)
-    model = Conv_temporal(config.K, 32, out_size = 1, nb_layers=3)
+    model = Conv_temporal(config.K, 100, out_size = 1, nb_layers=3)
     model = model.float()
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(),lr=0.01)
@@ -60,7 +60,7 @@ if __name__ == '__main__':
             optimizer.zero_grad()
 
             # Make predictions on the current sequence
-            seq = seq.float().unsqueeze(1)
+            seq = seq.float()
             target = target.float()
             y_pred = model(seq)
             # Compute the lossseq.view(-1,1,self.input_size)
@@ -98,18 +98,20 @@ if __name__ == '__main__':
     start = 0
     features = y_test[start:window+start].values
     target = []
+    eval_loss = 0
     for i in range(n_preds):
-        #seq = (features[i:]-mean)/std
-        seq = torch.tensor(seq).float().unsqueeze(1)#.view(1,-1)
+        seq = (features[i:]-mean)/std
+        seq = torch.tensor(seq).float().unsqueeze(0)
         y_pred = model(seq)
         y_pred = y_pred.detach().numpy()
         features = np.append(features, y_pred)
         target.append(y_test.iloc[window+i])
+        eval_loss += (y_pred - y_test.iloc[window+i])**2
 
     #print(target)
     #print(features[1:])
 
-
+    print('evaluation_loss: ', eval_loss)
     plt.plot(target)
     plt.plot(features[window:])
     plt.savefig("prediction_K_Temp_"+str(window)+".png")

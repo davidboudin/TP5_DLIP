@@ -30,7 +30,7 @@ class RosslerMap:
         t = np.linspace(0, nb_steps * _.delta_t, nb_steps)
         f = solve_ivp(_.v_eq, [0, nb_steps * _.delta_t], init_pos, method='RK45', t_eval=t)
         return np.moveaxis(f.y, -1, 0),t
-    
+
     def equilibrium(_):
         x0 = (_.c-np.sqrt(_.c**2-4*_.a*_.b))/2
         y0 = (-_.c+np.sqrt(_.c**2-4*_.a*_.b))/(2*_.a)
